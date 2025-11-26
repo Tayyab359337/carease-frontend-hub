@@ -11,6 +11,14 @@ import Signup from "./pages/Auth/Signup";
 import AdminDashboard from "./pages/Admin/Dashboard";
 import DoctorDashboard from "./pages/Doctor/Dashboard";
 import PatientDashboard from "./pages/Patient/Dashboard";
+import Doctors from "./pages/Admin/Doctors";
+import AdminPatients from "./pages/Admin/Patients";
+import Payments from "./pages/Admin/Payments";
+import DoctorPatients from "./pages/Doctor/Patients";
+import Appointments from "./pages/Appointments";
+import Visits from "./pages/Visits";
+import Notifications from "./pages/Notifications";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +42,68 @@ const App = () => {
                 element={
                   <ProtectedRoute>
                     <DashboardRouter />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Admin Routes */}
+              <Route
+                path="/doctors"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <Doctors />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/payments"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <Payments />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Doctor Routes */}
+              <Route
+                path="/patients"
+                element={
+                  <ProtectedRoute allowedRoles={['doctor', 'admin']}>
+                    <PatientsRouter />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Shared Routes */}
+              <Route
+                path="/appointments"
+                element={
+                  <ProtectedRoute>
+                    <Appointments />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/visits"
+                element={
+                  <ProtectedRoute>
+                    <Visits />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/notifications"
+                element={
+                  <ProtectedRoute>
+                    <Notifications />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <Settings />
                   </ProtectedRoute>
                 }
               />
@@ -64,6 +134,15 @@ const DashboardRouter = () => {
     default:
       return <Navigate to="/login" replace />;
   }
+};
+
+// Helper component to route patients page based on role
+const PatientsRouter = () => {
+  const { user } = useAuth();
+
+  if (!user) return <Navigate to="/login" replace />;
+
+  return user.role === 'admin' ? <AdminPatients /> : <DoctorPatients />;
 };
 
 export default App;
