@@ -19,6 +19,10 @@ import Appointments from "./pages/Appointments";
 import Visits from "./pages/Visits";
 import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
+import Subscription from "./pages/Subscription";
+import PatientDetails from "./pages/Details/PatientDetails";
+import DoctorDetails from "./pages/Details/DoctorDetails";
+import VisitDetails from "./pages/Details/VisitDetails";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -107,7 +111,41 @@ const App = () => {
                   </ProtectedRoute>
                 }
               />
-              
+              <Route
+                path="/subscription"
+                element={
+                  <ProtectedRoute allowedRoles={['doctor']}>
+                    <Subscription />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Detail Pages */}
+              <Route
+                path="/patients/:id"
+                element={
+                  <ProtectedRoute allowedRoles={['doctor', 'admin']}>
+                    <PatientDetails />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/doctors/:id"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <DoctorDetails />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/visits/:id"
+                element={
+                  <ProtectedRoute>
+                    <VisitDetails />
+                  </ProtectedRoute>
+                }
+              />
+
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/Layout/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { toast } from '@/hooks/use-toast';
 import { Users, Mail, Phone, CheckCircle2, XCircle } from 'lucide-react';
 
 export default function Doctors() {
+  const navigate = useNavigate();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -161,6 +163,16 @@ export default function Doctors() {
                           }
                         />
                       </div>
+                    </div>
+
+                    <div className="border-t pt-4">
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => navigate(`/doctors/${doctor.id}`)}
+                      >
+                        View Full Profile
+                      </Button>
                     </div>
                   </div>
                 </CardContent>

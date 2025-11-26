@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/Layout/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,6 +12,7 @@ import { Button } from '@/components/ui/button';
 
 export default function Visits() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [visits, setVisits] = useState<Visit[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -197,7 +199,11 @@ export default function Visits() {
                         </p>
                       )}
                     </div>
-                    <Button variant="outline" size="sm">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/visits/${visit.id}`)}
+                    >
                       View Details
                     </Button>
                   </div>
