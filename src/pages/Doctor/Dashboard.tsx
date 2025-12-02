@@ -100,20 +100,20 @@ export default function DoctorDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Doctor Dashboard</h1>
-            <p className="text-muted-foreground">Manage your patients and appointments</p>
+      <div className="space-y-4 md:space-y-6 px-2 md:px-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground truncate">Doctor Dashboard</h1>
+            <p className="text-sm sm:text-base text-muted-foreground mt-1">Manage your patients and appointments</p>
           </div>
           <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
             <DialogTrigger asChild>
-              <Button disabled={!canAddPatient}>
+              <Button disabled={!canAddPatient} className="w-full sm:w-auto">
                 <Plus className="mr-2 h-4 w-4" />
                 Add Patient
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Add New Patient</DialogTitle>
                 <DialogDescription>Enter patient details to add them to your list</DialogDescription>
@@ -196,18 +196,18 @@ export default function DoctorDashboard() {
         </div>
 
         {!isSubscribed && (
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
+          <Alert className="text-xs sm:text-sm">
+            <AlertCircle className="h-4 w-4 flex-shrink-0" />
             <AlertDescription>
               You're using the free plan ({patients.length}/{patientLimit} patients). Subscribe to add unlimited patients.
-              <Button variant="link" className="ml-2 p-0 h-auto">
+              <Button variant="link" className="ml-1 sm:ml-2 p-0 h-auto text-xs sm:text-sm">
                 Upgrade Now
               </Button>
             </AlertDescription>
           </Alert>
         )}
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           <MetricsCard
             title="Total Patients"
             value={patients.length}
@@ -226,30 +226,30 @@ export default function DoctorDashboard() {
         </div>
 
         <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle>My Patients</CardTitle>
-            <CardDescription>View and manage your patient list</CardDescription>
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-lg sm:text-xl">My Patients</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">View and manage your patient list</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+          <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+            <div className="space-y-3 sm:space-y-4">
               {patients.length === 0 ? (
-                <p className="text-muted-foreground text-center py-8">
+                <p className="text-muted-foreground text-center py-6 sm:py-8 text-sm sm:text-base">
                   No patients yet. Click "Add Patient" to get started.
                 </p>
               ) : (
                 patients.map((patient) => (
                   <div
                     key={patient.id}
-                    className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-3 sm:p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
                   >
-                    <div>
-                      <p className="font-medium">{patient.name}</p>
-                      <p className="text-sm text-muted-foreground">{patient.disease}</p>
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm sm:text-base truncate">{patient.name}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">{patient.disease}</p>
                       <p className="text-xs text-muted-foreground">
                         Next visit: {new Date(patient.nextVisit).toLocaleDateString()}
                       </p>
                     </div>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="w-full sm:w-auto">
                       View Details
                     </Button>
                   </div>

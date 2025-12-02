@@ -77,20 +77,20 @@ export default function AdminDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Overview of your healthcare platform</p>
+      <div className="space-y-4 md:space-y-6 px-2 md:px-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground truncate">Admin Dashboard</h1>
+            <p className="text-sm sm:text-base text-muted-foreground mt-1">Overview of your healthcare platform</p>
           </div>
-          <Button onClick={handleExportPayments} variant="outline">
+          <Button onClick={handleExportPayments} variant="outline" className="w-full sm:w-auto">
             <Download className="mr-2 h-4 w-4" />
             Export Data
           </Button>
         </div>
 
         {metrics && (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             <MetricsCard
               title="Total Doctors"
               value={metrics.totalDoctors}
@@ -119,30 +119,30 @@ export default function AdminDashboard() {
         )}
 
         <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CreditCard className="h-5 w-5" />
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+              <CreditCard className="h-5 w-5 flex-shrink-0" />
               Recent Payments
             </CardTitle>
-            <CardDescription>Manage doctor subscription payments</CardDescription>
+            <CardDescription className="text-xs sm:text-sm mt-1">Manage doctor subscription payments</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+          <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+            <div className="space-y-3 sm:space-y-4">
               {payments.length === 0 ? (
-                <p className="text-muted-foreground text-center py-8">No payments yet</p>
+                <p className="text-muted-foreground text-center py-6 sm:py-8 text-sm sm:text-base">No payments yet</p>
               ) : (
                 payments.map((payment) => (
                   <div
                     key={payment.id}
-                    className="flex items-center justify-between p-4 border border-border rounded-lg"
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-3 sm:p-4 border border-border rounded-lg"
                   >
-                    <div>
-                      <p className="font-medium">{payment.doctorName}</p>
-                      <p className="text-sm text-muted-foreground">
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm sm:text-base truncate">{payment.doctorName}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         ${payment.amount} - {new Date(payment.date).toLocaleDateString()}
                       </p>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 sm:gap-4">
                       <Switch
                         checked={payment.status === 'paid'}
                         onCheckedChange={(checked) =>
@@ -150,7 +150,7 @@ export default function AdminDashboard() {
                         }
                       />
                       <span
-                        className={`text-sm font-medium ${
+                        className={`text-xs sm:text-sm font-medium whitespace-nowrap ${
                           payment.status === 'paid' ? 'text-success' : 'text-warning'
                         }`}
                       >

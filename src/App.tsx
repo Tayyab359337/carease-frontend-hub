@@ -20,6 +20,7 @@ import Visits from "./pages/Visits";
 import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
 import Subscription from "./pages/Subscription";
+import Pricing from "./pages/Pricing";
 import PatientDetails from "./pages/Details/PatientDetails";
 import DoctorDetails from "./pages/Details/DoctorDetails";
 import VisitDetails from "./pages/Details/VisitDetails";
@@ -118,6 +119,10 @@ const App = () => {
                     <Subscription />
                   </ProtectedRoute>
                 }
+              />
+              <Route
+                path="/pricing"
+                element={<Pricing />}
               />
 
               {/* Detail Pages */}

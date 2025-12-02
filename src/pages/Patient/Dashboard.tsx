@@ -45,13 +45,13 @@ export default function PatientDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Patient Dashboard</h1>
-          <p className="text-muted-foreground">Track your health journey</p>
+      <div className="space-y-4 md:space-y-6 px-2 md:px-0">
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground truncate">Patient Dashboard</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">Track your health journey</p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           <MetricsCard
             title="Total Visits"
             value={visits.length}
@@ -70,36 +70,36 @@ export default function PatientDashboard() {
         </div>
 
         <Card className="shadow-md">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>My Visits</CardTitle>
-                <CardDescription>View your medical visit history</CardDescription>
+          <CardHeader className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="min-w-0">
+                <CardTitle className="text-lg sm:text-xl">My Visits</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">View your medical visit history</CardDescription>
               </div>
               <Input
                 type="search"
                 placeholder="Search visits..."
-                className="max-w-xs"
+                className="w-full sm:max-w-xs"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+          <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+            <div className="space-y-3 sm:space-y-4">
               {filteredVisits.length === 0 ? (
-                <p className="text-muted-foreground text-center py-8">
+                <p className="text-muted-foreground text-center py-6 sm:py-8 text-sm sm:text-base">
                   {searchQuery ? 'No visits found matching your search' : 'No visits yet'}
                 </p>
               ) : (
                 filteredVisits.map((visit) => (
                   <div
                     key={visit.id}
-                    className="flex items-center justify-between p-4 border border-border rounded-lg"
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-3 sm:p-4 border border-border rounded-lg"
                   >
-                    <div>
-                      <p className="font-medium">{visit.doctorName}</p>
-                      <p className="text-sm text-muted-foreground">
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm sm:text-base truncate">{visit.doctorName}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         {visit.disease} - {visit.medicine}
                       </p>
                       <p className="text-xs text-muted-foreground">
@@ -111,7 +111,7 @@ export default function PatientDashboard() {
                         </p>
                       )}
                     </div>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="w-full sm:w-auto">
                       View Details
                     </Button>
                   </div>
@@ -122,12 +122,12 @@ export default function PatientDashboard() {
         </Card>
 
         <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle>Request Appointment</CardTitle>
-            <CardDescription>Book an appointment with your doctor</CardDescription>
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-lg sm:text-xl">Request Appointment</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">Book an appointment with your doctor</CardDescription>
           </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground text-center py-8">
+          <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+            <p className="text-muted-foreground text-center py-6 sm:py-8 text-sm sm:text-base">
               Appointment request feature will be available when your doctor enables appointments.
             </p>
           </CardContent>
