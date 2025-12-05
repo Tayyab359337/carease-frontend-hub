@@ -7,11 +7,12 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
-import { patientAPI, exportToCSV } from '@/services/api/mockService';
+import { patientAPI, visitAPI, exportToCSV } from '@/services/api/mockService';
 import { Patient } from '@/services/api/types';
 import { toast } from '@/hooks/use-toast';
-import { Users, Plus, AlertCircle, Search, Download, Calendar } from 'lucide-react';
+import { Users, Plus, AlertCircle, Search, Download, Calendar, Stethoscope } from 'lucide-react';
 
 export default function DoctorPatients() {
   const { user } = useAuth();
@@ -19,6 +20,8 @@ export default function DoctorPatients() {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -27,6 +30,12 @@ export default function DoctorPatients() {
     email: '',
     disease: '',
     medicine: '',
+    nextVisit: '',
+  });
+  const [visitFormData, setVisitFormData] = useState({
+    disease: '',
+    medicine: '',
+    notes: '',
     nextVisit: '',
   });
 
@@ -112,6 +121,54 @@ export default function DoctorPatients() {
     patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     patient.disease.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleAddVisit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedPatient || !user) return;
+
+    setIsLoading(true);
+    try {
+      await visitAPI.createVisit({
+        patientId: selectedPatient.id,
+        patientName: selectedPatient.name,
+        doctorId: user.id,
+        doctorName: user.name,
+        date: new Date().toISOString(),
+        disease: visitFormData.disease,
+        medicine: visitFormData.medicine,
+        nextVisit: visitFormData.nextVisit || undefined,
+      });
+
+      toast({
+        title: 'Success',
+        description: 'Visit recorded successfully',
+      });
+
+      setIsVisitModalOpen(false);
+      setVisitFormData({ disease: '', medicine: '', notes: '', nextVisit: '' });
+      setSelectedPatient(null);
+      loadPatients();
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to record visit',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const openVisitModal = (patient: Patient) => {
+    setSelectedPatient(patient);
+    setVisitFormData({
+      disease: patient.disease,
+      medicine: patient.medicine,
+      notes: '',
+      nextVisit: '',
+    });
+    setIsVisitModalOpen(true);
+  };
 
   return (
     <DashboardLayout>
@@ -263,7 +320,7 @@ export default function DoctorPatients() {
                     key={patient.id}
                     className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors"
                   >
-                    <div className="flex-1">
+                <div className="flex-1">
                       <h3 className="font-semibold mb-1">{patient.name}</h3>
                       <div className="grid md:grid-cols-2 gap-2 text-sm text-muted-foreground">
                         <p>🏥 {patient.disease}</p>
@@ -275,19 +332,96 @@ export default function DoctorPatients() {
                         </p>
                       </div>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate(`/patients/${patient.id}`)}
-                    >
-                      View Details
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => openVisitModal(patient)}
+                      >
+                        <Stethoscope className="mr-1 h-4 w-4" />
+                        Add Visit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/patients/${patient.id}`)}
+                      >
+                        View Details
+                      </Button>
+                    </div>
                   </div>
                 ))
               )}
             </div>
           </CardContent>
         </Card>
+        {/* Add Visit Dialog */}
+        <Dialog open={isVisitModalOpen} onOpenChange={setIsVisitModalOpen}>
+          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Record Current Visit</DialogTitle>
+              <DialogDescription>
+                {selectedPatient && `Recording visit for ${selectedPatient.name}`}
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleAddVisit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="visit-disease">Diagnosis / Condition</Label>
+                <Input
+                  id="visit-disease"
+                  value={visitFormData.disease}
+                  onChange={(e) => setVisitFormData({ ...visitFormData, disease: e.target.value })}
+                  placeholder="e.g., Common Cold, Hypertension"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="visit-medicine">Prescribed Medicine</Label>
+                <Textarea
+                  id="visit-medicine"
+                  value={visitFormData.medicine}
+                  onChange={(e) => setVisitFormData({ ...visitFormData, medicine: e.target.value })}
+                  placeholder="e.g., Paracetamol 500mg - 2x daily"
+                  rows={3}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="visit-notes">Clinical Notes (Optional)</Label>
+                <Textarea
+                  id="visit-notes"
+                  value={visitFormData.notes}
+                  onChange={(e) => setVisitFormData({ ...visitFormData, notes: e.target.value })}
+                  placeholder="Any additional observations or instructions..."
+                  rows={3}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="visit-nextVisit">Next Visit Date (Optional)</Label>
+                <Input
+                  id="visit-nextVisit"
+                  type="date"
+                  value={visitFormData.nextVisit}
+                  onChange={(e) => setVisitFormData({ ...visitFormData, nextVisit: e.target.value })}
+                  min={new Date().toISOString().split('T')[0]}
+                />
+              </div>
+              <div className="flex gap-2 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setIsVisitModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1" disabled={isLoading}>
+                  {isLoading ? 'Saving...' : 'Save Visit'}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );
