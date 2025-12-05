@@ -99,6 +99,42 @@ const initializeSampleData = () => {
     ];
     
     saveToStorage(STORAGE_KEYS.VISITS, sampleVisits);
+
+    // Add sample appointments
+    const sampleAppointments: Appointment[] = [
+      {
+        id: 'apt-1',
+        patientId: 'patient-1',
+        patientName: 'John Smith',
+        doctorId: 'doctor-1',
+        doctorName: 'Dr. Sarah Johnson',
+        date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+        status: 'confirmed',
+        notes: 'Follow-up checkup',
+      },
+      {
+        id: 'apt-2',
+        patientId: 'patient-1',
+        patientName: 'John Smith',
+        doctorId: 'doctor-1',
+        doctorName: 'Dr. Sarah Johnson',
+        date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+        status: 'pending',
+        notes: 'Vaccination appointment',
+      },
+      {
+        id: 'apt-3',
+        patientId: 'patient-1',
+        patientName: 'John Smith',
+        doctorId: 'doctor-1',
+        doctorName: 'Dr. Sarah Johnson',
+        date: new Date().toISOString(),
+        status: 'confirmed',
+        notes: 'Routine checkup',
+      },
+    ];
+    
+    saveToStorage(STORAGE_KEYS.APPOINTMENTS, sampleAppointments);
   }
 };
 
@@ -265,6 +301,11 @@ export const appointmentAPI = {
     
     return appointments;
   },
+
+  getAllAppointments: async (): Promise<Appointment[]> => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return getFromStorage<Appointment[]>(STORAGE_KEYS.APPOINTMENTS, []);
+  },
   
   createAppointment: async (appointment: Omit<Appointment, 'id'>): Promise<Appointment> => {
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -280,6 +321,18 @@ export const appointmentAPI = {
     saveToStorage(STORAGE_KEYS.APPOINTMENTS, appointments);
     
     return newAppointment;
+  },
+
+  updateAppointmentStatus: async (id: string, status: 'pending' | 'confirmed' | 'cancelled'): Promise<void> => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    const appointments = getFromStorage<Appointment[]>(STORAGE_KEYS.APPOINTMENTS, []);
+    const appointment = appointments.find(a => a.id === id);
+    
+    if (appointment) {
+      appointment.status = status;
+      saveToStorage(STORAGE_KEYS.APPOINTMENTS, appointments);
+    }
   },
 };
 
