@@ -221,6 +221,34 @@ export const visitAPI = {
     const visits = getFromStorage<Visit[]>(STORAGE_KEYS.VISITS, []);
     return visits.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   },
+
+  createVisit: async (visit: Omit<Visit, 'id'>): Promise<Visit> => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const visits = getFromStorage<Visit[]>(STORAGE_KEYS.VISITS, []);
+    
+    const newVisit: Visit = {
+      ...visit,
+      id: `visit-${Date.now()}`,
+    };
+    
+    visits.push(newVisit);
+    saveToStorage(STORAGE_KEYS.VISITS, visits);
+    
+    // Update patient's nextVisit if provided
+    if (visit.nextVisit) {
+      const patients = getFromStorage<Patient[]>(STORAGE_KEYS.PATIENTS, []);
+      const patient = patients.find(p => p.id === visit.patientId);
+      if (patient) {
+        patient.nextVisit = visit.nextVisit;
+        patient.disease = visit.disease;
+        patient.medicine = visit.medicine;
+        saveToStorage(STORAGE_KEYS.PATIENTS, patients);
+      }
+    }
+    
+    return newVisit;
+  },
 };
 
 // Appointment API
